@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#160d20">
+  <title>Liza's 21st Birthday</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+    :root{
+      --bg:#100914; --card:rgba(255,255,255,.08); --gold:#f4cf78;
+      --pink:#f2a9c7; --white:#fff9fc; --muted:#d7c9d2;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; color:var(--white); background:
+      radial-gradient(circle at 20% 10%, rgba(242,169,199,.22), transparent 28%),
+      radial-gradient(circle at 80% 30%, rgba(244,207,120,.14), transparent 30%),
+      linear-gradient(145deg,#100914,#211027 55%,#0d0811);
+      font-family:Montserrat,Arial,sans-serif; overflow-x:hidden;
+    }
+    body:before{
+      content:""; position:fixed; inset:0; pointer-events:none; opacity:.14;
+      background-image:radial-gradient(#fff 1px,transparent 1px);
+      background-size:34px 34px;
+    }
+    .hero{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:70px 20px; text-align:center; position:relative}
+    .hero-inner{max-width:850px; animation:fadeUp 1.2s ease both}
+    .eyebrow{letter-spacing:5px;text-transform:uppercase;color:var(--gold);font-size:12px;font-weight:700}
+    h1{font-family:"Cormorant Garamond",serif;font-size:clamp(72px,15vw,150px);line-height:.78;margin:24px 0 10px}
+    h2{font-family:"Cormorant Garamond",serif;font-size:clamp(42px,8vw,72px);margin:0 0 18px}
+    .subtitle{font-size:15px;color:var(--muted);letter-spacing:2px}
+    .date{font-size:20px;font-weight:600;margin-top:28px;color:var(--pink)}
+    .scroll{margin-top:50px;display:inline-block;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.25);padding:13px 22px;border-radius:999px}
+    section{padding:80px 20px;max-width:980px;margin:auto}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(14px);border-radius:28px;padding:28px;box-shadow:0 25px 80px rgba(0,0,0,.25)}
+    .photo-wrap{max-width:480px;margin:auto}
+    .photo{
+      width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:22px;
+      display:block; background:linear-gradient(135deg,#4a2847,#c48ca8);
+      border:1px solid rgba(255,255,255,.2);
+    }
+    .photo-note{text-align:center;color:var(--muted);font-size:12px;margin-top:10px}
+    .countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:30px}
+    .timebox{padding:20px 10px;border-radius:18px;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.1)}
+    .num{font-size:32px;font-weight:700;color:var(--gold)}
+    .label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-top:5px}
+    .details{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:25px}
+    .detail{padding:22px;border-radius:20px;background:rgba(255,255,255,.05)}
+    .detail strong{display:block;color:var(--gold);margin-bottom:8px}
+    .detail span{color:var(--muted);line-height:1.6}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      border:0;border-radius:999px;padding:14px 20px;font-weight:700;
+      text-decoration:none;cursor:pointer;margin:7px;color:#180d17;background:var(--gold);
+    }
+    .btn.secondary{background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.15)}
+    .center{text-align:center}
+    input,select{
+      width:100%;padding:15px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.18);
+      background:rgba(0,0,0,.2);color:white;outline:none;font:inherit;margin-bottom:12px;
+    }
+    option{color:#111}
+    .personalized{margin-top:15px;padding:15px;border-radius:14px;background:rgba(242,169,199,.09);color:var(--muted);display:none}
+    footer{text-align:center;padding:50px 20px 80px;color:var(--muted);font-size:12px}
+    .music{
+      position:fixed;right:18px;bottom:18px;z-index:20;width:54px;height:54px;border-radius:50%;
+      border:1px solid rgba(255,255,255,.2);background:rgba(20,10,20,.8);color:white;cursor:pointer;
+      backdrop-filter:blur(10px)
+    }
+    .music.playing{animation:spin 4s linear infinite}
+    .confetti{position:fixed;width:7px;height:12px;top:-20px;z-index:30;pointer-events:none;animation:fall 4s linear forwards}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:none}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+    @media(max-width:650px){
+      .countdown{grid-template-columns:repeat(2,1fr)}
+      .details{grid-template-columns:1fr}
+      section{padding:60px 16px}
+      h1{font-size:86px}
+    }
+  </style>
+</head>
+<body>
+
+<button class="music" id="musicBtn" aria-label="Play music">♫</button>
+<audio id="bgMusic" loop>
+  <!-- Put your music file in assets/music.mp3 -->
+  <source src="assets/music.mp3" type="audio/mpeg">
+</audio>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">You're Invited</div>
+    <h1>Liza</h1>
+    <div class="subtitle">TO THE 21ST BIRTHDAY CELEBRATION</div>
+    <div class="date">02 • OCTOBER • 2026</div>
+    <a class="scroll" href="#invitation">Open Invitation ↓</a>
+  </div>
+</header>
+
+<main id="invitation">
+  <section>
+    <div class="card center">
+      <h2>Twenty One</h2>
+      <p style="color:var(--muted);line-height:1.8;max-width:650px;margin:0 auto">
+        A special night, a new chapter, and a celebration with the people who make life memorable.
+        We would love to celebrate Liza's 21st birthday with you.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="photo-wrap">
+      <!-- Replace assets/liza.jpg with Liza's photo -->
+      <img class="photo" src="assets/liza.jpg" alt="Liza">
+      <div class="photo-note">Replace <b>assets/liza.jpg</b> with Liza's photo.</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="card center">
+      <div class="eyebrow">Counting Down To The Celebration</div>
+      <div class="countdown">
+        <div class="timebox"><div class="num" id="days">00</div><div class="label">Days</div></div>
+        <div class="timebox"><div class="num" id="hours">00</div><div class="label">Hours</div></div>
+        <div class="timebox"><div class="num" id="minutes">00</div><div class="label">Minutes</div></div>
+        <div class="timebox"><div class="num" id="seconds">00</div><div class="label">Seconds</div></div>
+      </div>
+      <p id="countdownText" style="color:var(--muted);margin-top:20px"></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="card">
+      <h2 class="center">The Celebration</h2>
+      <div class="details">
+        <div class="detail"><strong>DATE</strong><span>Friday, 2 October 2026</span></div>
+        <div class="detail"><strong>VENUE</strong><span>Livehouse Bali</span></div>
+        <div class="detail"><strong>DRESS CODE</strong><span>Come dressed for a special night ✨</span></div>
+        <div class="detail"><strong>LOCATION</strong><span>Livehouse Bali</span></div>
+      </div>
+      <div class="center" style="margin-top:22px">
+        <a class="btn" href="https://www.google.com/maps/search/?api=1&query=Livehouse+Bali" target="_blank">📍 Open Location</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="card center">
+      <h2>RSVP</h2>
+      <p style="color:var(--muted)">Please confirm your attendance via WhatsApp.</p>
+
+      <input id="guestName" type="text" placeholder="Enter your name" autocomplete="name">
+      <select id="attendance">
+        <option value="Yes, I will attend">Yes, I will attend 🎉</option>
+        <option value="Sorry, I can't attend">Sorry, I can't attend</option>
+      </select>
+
+      <button class="btn" onclick="sendRSVP()">Confirm via WhatsApp</button>
+      <div id="rsvpMessage" class="personalized"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="card center">
+      <h2>Personalized Invitation</h2>
+      <p style="color:var(--muted)">Create a link with your guest's name and share it directly on WhatsApp.</p>
+      <input id="shareName" type="text" placeholder="Guest name">
+      <button class="btn" onclick="createShareLink()">Create WhatsApp Invitation</button>
+      <div id="shareResult" class="personalized"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  With love, Liza ♡<br>
+  02 October 2026 · Livehouse Bali
+</footer>
+
+<script>
+  // ============================
+  // CHANGE THIS NUMBER
+  // Use international format without +, spaces or dashes.
+  // Example Indonesia: 6281234567890
+  // ============================
+  const RSVP_WHATSAPP = "6281234567890";
+
+  // Countdown: 2 October 2026, 19:00 Bali time (WITA).
+  const eventDate = new Date("2026-10-02T19:00:00+08:00").getTime();
+
+  function updateCountdown(){
+    const now = Date.now();
+    let diff = eventDate - now;
+
+    if(diff <= 0){
+      document.getElementById("days").textContent="00";
+      document.getElementById("hours").textContent="00";
+      document.getElementById("minutes").textContent="00";
+      document.getElementById("seconds").textContent="00";
+      document.getElementById("countdownText").textContent="The celebration has started! 🎉";
+      return;
+    }
+
+    const days = Math.floor(diff / 86400000); diff %= 86400000;
+    const hours = Math.floor(diff / 3600000); diff %= 3600000;
+    const minutes = Math.floor(diff / 60000); diff %= 60000;
+    const seconds = Math.floor(diff / 1000);
+
+    document.getElementById("days").textContent=String(days).padStart(2,"0");
+    document.getElementById("hours").textContent=String(hours).padStart(2,"0");
+    document.getElementById("minutes").textContent=String(minutes).padStart(2,"0");
+    document.getElementById("seconds").textContent=String(seconds).padStart(2,"0");
+    document.getElementById("countdownText").textContent="Until the party begins ✨";
+  }
+  updateCountdown();
+  setInterval(updateCountdown,1000);
+
+  function getGuestName(){
+    return (document.getElementById("guestName").value || "").trim();
+  }
+
+  function sendRSVP(){
+    const name = getGuestName();
+    const attendance = document.getElementById("attendance").value;
+
+    if(!name){
+      alert("Please enter your name first.");
+      return;
+    }
+
+    const message =
+      `Hello Liza!%0A%0A` +
+      `I would like to RSVP for your 21st Birthday.%0A` +
+      `Name: ${encodeURIComponent(name)}%0A` +
+      `Attendance: ${encodeURIComponent(attendance)}%0A%0A` +
+      `See you on 2 October 2026 at Livehouse Bali! 🎉`;
+
+    window.open(`https://wa.me/${RSVP_WHATSAPP}?text=${message}`, "_blank");
+  }
+
+  function createShareLink(){
+    const name = (document.getElementById("shareName").value || "").trim();
+    if(!name){
+      alert("Please enter the guest name first.");
+      return;
+    }
+
+    const url = new URL(window.location.href);
+    url.searchParams.set("to", name);
+
+    const msg =
+      `Hi ${name}! 💕%0A%0A` +
+      `You are invited to Liza's 21st Birthday! 🎂✨%0A%0A` +
+      `${url.toString()}%0A%0A` +
+      `See you on 2 October 2026 at Livehouse Bali!`;
+
+    const box = document.getElementById("shareResult");
+    box.style.display = "block";
+    box.innerHTML =
+      `Invitation prepared for <b>${escapeHtml(name)}</b>.<br><br>` +
+      `<a class="btn" href="https://wa.me/?text=${msg}" target="_blank">Share via WhatsApp</a>`;
+  }
+
+  function escapeHtml(text){
+    const div=document.createElement("div");
+    div.textContent=text;
+    return div.innerHTML;
+  }
+
+  // Show personalized greeting from ?to=Guest Name
+  const params = new URLSearchParams(window.location.search);
+  const guest = params.get("to");
+  if(guest){
+    const clean = escapeHtml(guest);
+    document.querySelector(".hero-inner").insertAdjacentHTML(
+      "afterbegin",
+      `<div style="margin-bottom:15px;color:var(--pink);font-weight:600">Dear ${clean},</div>`
+    );
+  }
+
+  // Music button. Browsers require a user interaction before audio can play.
+  const music = document.getElementById("bgMusic");
+  const musicBtn = document.getElementById("musicBtn");
+  musicBtn.addEventListener("click", async () => {
+    if(music.paused){
+      try{ await music.play(); musicBtn.classList.add("playing"); musicBtn.textContent="♫"; }
+      catch(e){ alert("Please add assets/music.mp3 first."); }
+    }else{
+      music.pause(); musicBtn.classList.remove("playing");
+    }
+  });
+
+  // Small celebration animation when opening the page.
+  window.addEventListener("load",()=>{
+    for(let i=0;i<24;i++){
+      setTimeout(()=>{
+        const c=document.createElement("div");
+        c.className="confetti";
+        c.style.left=Math.random()*100+"vw";
+        c.style.animationDelay=(Math.random()*.7)+"s";
+        c.style.transform=`rotate(${Math.random()*360}deg)`;
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),4500);
+      },i*45);
+    }
+  });
+</script>
+</body>
+</html>
